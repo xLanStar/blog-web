@@ -1,7 +1,6 @@
-# Just Go Web
+# Blog Web
 
-[just-go.voidcloud.net](https://just-go.voidcloud.net/)
-[UIUX Design](https://www.figma.com/file/RlrUfAHJVP51u0cE6Yv3zS/%E8%AA%AA%E8%B5%B0%E5%B0%B1%E8%B5%B0?type=design&node-id=0%3A1&mode=design&t=WFhuI6xlJe6uLla4-1)
+[blog.voidcloud.net](https://blog.voidcloud.net/)
 
 ## Development
 
