@@ -32,7 +32,7 @@ const Signin: React.FunctionComponent = () => {
     APIHelper.post<LoginResponse>(AUTH_LOGIN_URL, data).then(({ data }) => {
       console.log(data);
       dispatch(setUser(data));
-      navigate("/");
+      navigate("/", { replace: true });
     });
   };
 

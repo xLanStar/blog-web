@@ -18,7 +18,7 @@ const App: React.FunctionComponent = () => {
       })
       .catch(() => {
         console.log("User is not signed in");
-        navigate("/signin");
+        navigate("/signin", { replace: true });
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
