@@ -7,22 +7,33 @@ import { Button, Divider, Flex, Form, Image, Input } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { CommonRules } from "../../data/form";
+import { AUTH_LOGIN_URL } from "../../data/reference";
+import { setUser } from "../../feature/user/userSlice";
+import APIHelper from "../../helper/APIHelper";
+import { useAppDispatch } from "../../hooks";
 
 interface LoginFormData {
   email: string;
   password: string;
 }
 
+interface LoginResponse {
+  id: number;
+  name: string;
+}
+
 const Signin: React.FunctionComponent = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const [form] = Form.useForm();
 
   const onFinish = (data: LoginFormData) => {
-    console.log(data);
-    // ++debug
-    navigate("/");
-    // --debug
+    APIHelper.post<LoginResponse>(AUTH_LOGIN_URL, data).then(({ data }) => {
+      console.log(data);
+      dispatch(setUser(data));
+      navigate("/");
+    });
   };
 
   return (
