@@ -9,24 +9,7 @@ import APIHelper from "../helper/APIHelper";
 const Home: React.FunctionComponent = () => {
   // const user = useAppSelector((state) => state.user);
 
-  const [posts, setPosts] = useState<IPost[]>([
-    {
-      author_id: 1,
-      author_name: "test",
-      comments: [
-        {
-          author_id: 1,
-          author_name: "test",
-          text: "真的",
-        },
-      ],
-      created_at: "2024-05-16 08:28:11",
-      id: 1,
-      liked: false,
-      likes_count: 0,
-      text: "真的假的?",
-    },
-  ]);
+  const [posts, setPosts] = useState<IPost[]>([]);
   const [isNewPostModalOpen, setIsNewPostModalOpen] = useState(false);
 
   const onClickLikeBlog = useCallback((id: number) => {
@@ -45,10 +28,14 @@ const Home: React.FunctionComponent = () => {
     });
   }, []);
 
-  useEffect(() => {
+  const fetchPosts = () => {
     APIHelper.get<IPost[]>(API_POST_URL).then((data) => {
       setPosts(data.data);
     });
+  };
+
+  useEffect(() => {
+    fetchPosts();
   }, []);
 
   return (
@@ -81,6 +68,7 @@ const Home: React.FunctionComponent = () => {
       <NewPostModal
         open={isNewPostModalOpen}
         onCancel={() => setIsNewPostModalOpen(false)}
+        onPost={fetchPosts}
       />
     </>
   );

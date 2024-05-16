@@ -20,7 +20,7 @@ const App: React.FunctionComponent = () => {
         console.log("User is not signed in");
         navigate("/signin");
       });
-  }, [navigate]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Routes>

@@ -20,6 +20,7 @@ export interface IPost {
     author_id: number;
     author_name: string;
     text: string;
+    created_at: string;
   }[];
   created_at: string;
 }
