@@ -13,6 +13,8 @@ const API_URL = `${SERVER_HOST}/api`;
 
 // API - Post
 export const API_POST_URL = `${API_URL}/post`;
+export const API_POST_LIKE_URL = `${API_POST_URL}/like`;
+export const API_POST_DISLIKE_URL = `${API_POST_URL}/dislike`;
 
 // API - Comment
 export const API_COMMENT_URL = `${API_URL}/comment`;
