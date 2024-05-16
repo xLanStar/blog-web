@@ -37,7 +37,7 @@ const Layout = () => {
         }}
       >
         <Button
-          icon={<img width={32} height={32} src="src/assets/img/blog.svg" />}
+          icon={<img width={32} height={32} src="blog.svg" />}
           type="text"
           onClick={() => navigate("/")}
         />

@@ -43,7 +43,7 @@ const Signin: React.FunctionComponent = () => {
       align="center"
       style={{ minHeight: "100vh" }}
     >
-      <Image src="src/assets/img/blog.svg" preview={false} width={128} />
+      <Image src="blog.svg" preview={false} width={128} />
       <h3>登入</h3>
       <Form
         form={form}
