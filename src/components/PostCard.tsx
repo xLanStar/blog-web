@@ -13,7 +13,7 @@ export interface IPost {
   images?: string[];
   author_id: number;
   author_name: string;
-  author_image?: string;
+  author_picture?: string;
   likes_count: number;
   liked: boolean;
   comments: {
@@ -64,7 +64,7 @@ const PostCard: React.FunctionComponent<IPostCardProps> = ({
     >
       <Space direction="vertical" size="large">
         <Meta
-          avatar={<Avatar src={post.author_image} />}
+          avatar={<Avatar src={post.author_picture} />}
           title={post.author_name}
           description={
             <Tooltip title={formatDateTime(post.created_at)}>

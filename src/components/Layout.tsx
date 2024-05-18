@@ -1,12 +1,21 @@
 import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { Layout as AntdLayout, Button, Dropdown, Flex, Input } from "antd";
+import {
+  Layout as AntdLayout,
+  Avatar,
+  Button,
+  Dropdown,
+  Flex,
+  Input,
+} from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
+import { useAppSelector } from "../hooks";
 
 const { Header, Footer, Content } = AntdLayout;
 
 const Layout = () => {
   const navigate = useNavigate();
+  const userPicture = useAppSelector((state) => state.user.picture);
 
   const items: MenuProps["items"] = [
     {
@@ -46,16 +55,26 @@ const Layout = () => {
 
           <Dropdown menu={{ items }} placement="bottomRight">
             <Button
-              icon={<UserOutlined />}
+              icon={<Avatar src={userPicture} size="large" />}
               shape="circle"
               type="text"
-              size="large"
             />
           </Dropdown>
         </Flex>
       </Header>
       <Content>
-        <Outlet />
+        <Flex justify="center">
+          <Flex
+            vertical
+            gap={32}
+            justify="start"
+            style={{
+              padding: 32,
+            }}
+          >
+            <Outlet />
+          </Flex>
+        </Flex>
       </Content>
       <Footer
         style={{

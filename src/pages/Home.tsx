@@ -1,5 +1,5 @@
 import { PlusSquareOutlined } from "@ant-design/icons";
-import { App, Flex, FloatButton, Tooltip } from "antd";
+import { App, FloatButton, Tooltip } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import NewPostModal from "../components/NewPostModal";
 import PostCard, { IPost } from "../components/PostCard";
@@ -55,31 +55,20 @@ const Home: React.FunctionComponent = () => {
 
   return (
     <>
-      <Flex justify="center">
-        <Flex
-          vertical
-          gap={32}
-          justify="start"
-          style={{
-            padding: 32,
-          }}
-        >
-          <Tooltip title="發布貼文">
-            <FloatButton
-              type="primary"
-              icon={<PlusSquareOutlined />}
-              onClick={() => setIsNewPostModalOpen(true)}
-            />
-          </Tooltip>
-          {posts.map((blog, idx) => (
-            <PostCard
-              key={idx}
-              post={blog}
-              onClickLike={() => onClickLikeBlog(blog.id)}
-            />
-          ))}
-        </Flex>
-      </Flex>
+      <Tooltip title="發布貼文">
+        <FloatButton
+          type="primary"
+          icon={<PlusSquareOutlined />}
+          onClick={() => setIsNewPostModalOpen(true)}
+        />
+      </Tooltip>
+      {posts.map((blog, idx) => (
+        <PostCard
+          key={idx}
+          post={blog}
+          onClickLike={() => onClickLikeBlog(blog.id)}
+        />
+      ))}
       <NewPostModal
         open={isNewPostModalOpen}
         onCancel={() => setIsNewPostModalOpen(false)}
