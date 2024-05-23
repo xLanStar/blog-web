@@ -75,53 +75,61 @@ const MessageBlock: React.FunctionComponent<MessageBlockProps> = ({
       <Space style={{ position: "absolute", top: 0, right: 0 }}>
         {isEditing ? (
           <>
-            <Button
-              key="save"
-              type="text"
-              shape="circle"
-              icon={<CheckOutlined />}
-              disabled={!canSave}
-              onClick={() => {
-                setIsEditing(false);
-                onEdit?.(editingText);
-              }}
-            />
-            <Button
-              key="cancel"
-              type="text"
-              shape="circle"
-              icon={<CloseOutlined />}
-              onClick={() => {
-                setIsEditing(false);
-              }}
-            />
+            <Tooltip title="儲存">
+              <Button
+                key="save"
+                type="text"
+                shape="circle"
+                icon={<CheckOutlined />}
+                disabled={!canSave}
+                onClick={() => {
+                  setIsEditing(false);
+                  onEdit?.(editingText);
+                }}
+              />
+            </Tooltip>
+            <Tooltip title="取消">
+              <Button
+                key="cancel"
+                type="text"
+                shape="circle"
+                icon={<CloseOutlined />}
+                onClick={() => {
+                  setIsEditing(false);
+                }}
+              />
+            </Tooltip>
           </>
         ) : (
           editable && (
             <>
-              <Button
-                key="edit"
-                type="text"
-                shape="circle"
-                icon={<EditOutlined />}
-                onClick={() => {
-                  setIsEditing(true);
-                  setEditingText(text ?? "");
-                }}
-              />
-              <Button
-                key="delete"
-                type="text"
-                shape="circle"
-                icon={<DeleteOutlined />}
-                onClick={() =>
-                  modal.confirm({
-                    title: "確定要刪除嗎？",
-                    content: "請注意：刪除後將無法復原",
-                    onOk: onDelete,
-                  })
-                }
-              />
+              <Tooltip title="編輯">
+                <Button
+                  key="edit"
+                  type="text"
+                  shape="circle"
+                  icon={<EditOutlined />}
+                  onClick={() => {
+                    setIsEditing(true);
+                    setEditingText(text ?? "");
+                  }}
+                />
+              </Tooltip>
+              <Tooltip title="刪除">
+                <Button
+                  key="delete"
+                  type="text"
+                  shape="circle"
+                  icon={<DeleteOutlined />}
+                  onClick={() =>
+                    modal.confirm({
+                      title: "確定要刪除嗎？",
+                      content: "請注意：刪除後將無法復原",
+                      onOk: onDelete,
+                    })
+                  }
+                />
+              </Tooltip>
             </>
           )
         )}
