@@ -2,12 +2,13 @@ import {
   CheckOutlined,
   CloseOutlined,
   CommentOutlined,
+  DeleteOutlined,
   EditOutlined,
   HeartFilled,
   HeartOutlined,
   SendOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button, Flex, Image, Input, Space, Tooltip } from "antd";
+import { App, Avatar, Button, Flex, Image, Input, Space, Tooltip } from "antd";
 import Meta from "antd/es/card/Meta";
 import { useState } from "react";
 import { useAppSelector } from "../hooks";
@@ -25,6 +26,7 @@ type MessageBlockProps = {
   createdAt?: string;
   editable?: boolean;
   onEdit?: (text: string) => void;
+  onDelete?: () => void;
 };
 
 const MessageBlock: React.FunctionComponent<MessageBlockProps> = ({
@@ -34,7 +36,10 @@ const MessageBlock: React.FunctionComponent<MessageBlockProps> = ({
   createdAt,
   editable,
   onEdit,
+  onDelete,
 }) => {
+  const { modal } = App.useApp();
+
   const [isEditing, setIsEditing] = useState(false);
   const [editingText, setEditingText] = useState(text ?? "");
 
@@ -93,16 +98,31 @@ const MessageBlock: React.FunctionComponent<MessageBlockProps> = ({
           </>
         ) : (
           editable && (
-            <Button
-              key="edit"
-              type="text"
-              shape="circle"
-              icon={<EditOutlined />}
-              onClick={() => {
-                setIsEditing(true);
-                setEditingText(text ?? "");
-              }}
-            />
+            <>
+              <Button
+                key="edit"
+                type="text"
+                shape="circle"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  setIsEditing(true);
+                  setEditingText(text ?? "");
+                }}
+              />
+              <Button
+                key="delete"
+                type="text"
+                shape="circle"
+                icon={<DeleteOutlined />}
+                onClick={() =>
+                  modal.confirm({
+                    title: "確定要刪除嗎？",
+                    content: "請注意：刪除後將無法復原",
+                    onOk: onDelete,
+                  })
+                }
+              />
+            </>
           )
         )}
       </Space>
@@ -179,9 +199,11 @@ export interface IPost {
 export type PostCardProps = {
   post: IPost;
   onEditPost?: (text: string) => void;
-  onClickLike?: () => void;
-  onEditComment?: (commentId: number, comment: string) => void;
+  onLikePost?: () => void;
+  onDeletePost?: () => void;
   onSendComment?: (comment: string) => void;
+  onEditComment?: (commentId: number, comment: string) => void;
+  onDeleteComment?: (commentId: number) => void;
 };
 
 /**
@@ -190,9 +212,11 @@ export type PostCardProps = {
 const PostCard: React.FunctionComponent<PostCardProps> = ({
   post,
   onEditPost,
-  onClickLike,
-  onEditComment,
+  onLikePost,
+  onDeletePost,
   onSendComment,
+  onEditComment,
+  onDeleteComment,
 }) => {
   const user = useAppSelector((state) => state.user);
   const [showComments, setShowComments] = useState(false);
@@ -217,6 +241,7 @@ const PostCard: React.FunctionComponent<PostCardProps> = ({
         createdAt={post.created_at}
         editable={post.author_id === user.id}
         onEdit={onEditPost}
+        onDelete={onDeletePost}
       />
       <CardBlock>
         <Flex justify="space-evenly">
@@ -229,7 +254,7 @@ const PostCard: React.FunctionComponent<PostCardProps> = ({
                 }}
                 shape="circle"
                 type="text"
-                onClick={onClickLike}
+                onClick={onLikePost}
               />
             </Tooltip>
             {post.likes_count ?? 0}
@@ -260,6 +285,9 @@ const PostCard: React.FunctionComponent<PostCardProps> = ({
                 editable={comment.author_id === user.id}
                 onEdit={(text) => {
                   onEditComment?.(comment.id, text);
+                }}
+                onDelete={() => {
+                  onDeleteComment?.(comment.id);
                 }}
               />
             ))}

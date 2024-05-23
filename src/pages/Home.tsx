@@ -61,6 +61,20 @@ const Home: React.FunctionComponent = () => {
     [message, posts]
   );
 
+  const deletePost = useCallback(
+    (id: number) => {
+      APIHelper.delete(`${API_POST_URL}/${id}`)
+        .then(() => {
+          message.success("刪除成功");
+          fetchPosts();
+        })
+        .catch(() => {
+          message.error("操作失敗");
+        });
+    },
+    [message]
+  );
+
   const createComment = useCallback(
     (postId: number, comment: string) => {
       const post = posts.find((post) => post.id === postId);
@@ -82,6 +96,20 @@ const Home: React.FunctionComponent = () => {
       APIHelper.patch(`${API_COMMENT_URL}/${commentId}`, { text })
         .then(() => {
           message.success("編輯成功");
+          fetchPosts();
+        })
+        .catch(() => {
+          message.error("操作失敗");
+        });
+    },
+    [message]
+  );
+
+  const deleteComment = useCallback(
+    (commentId: number) => {
+      APIHelper.delete(`${API_COMMENT_URL}/${commentId}`)
+        .then(() => {
+          message.success("刪除成功");
           fetchPosts();
         })
         .catch(() => {
@@ -117,13 +145,17 @@ const Home: React.FunctionComponent = () => {
           onEditPost={(text) => {
             editPost(post.id, text);
           }}
-          onClickLike={() => {
+          onLikePost={() => {
             likePost(post.id);
+          }}
+          onDeletePost={() => {
+            deletePost(post.id);
           }}
           onSendComment={(comment) => {
             createComment(post.id, comment);
           }}
           onEditComment={editComment}
+          onDeleteComment={deleteComment}
         />
       ))}
       <NewPostModal
