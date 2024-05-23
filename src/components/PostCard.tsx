@@ -46,7 +46,7 @@ const MessageBlock: React.FunctionComponent<MessageBlockProps> = ({
   const canSave = !!editingText && editingText !== text;
 
   return (
-    <CardBlock style={{ position: "relative" }}>
+    <div style={{ position: "relative" }}>
       <Flex vertical gap={8}>
         <Meta
           avatar={<Avatar src={authorPicture} />}
@@ -126,7 +126,7 @@ const MessageBlock: React.FunctionComponent<MessageBlockProps> = ({
           )
         )}
       </Space>
-    </CardBlock>
+    </div>
   );
 };
 
@@ -234,15 +234,17 @@ const PostCard: React.FunctionComponent<PostCardProps> = ({
         minWidth: 300,
       }}
     >
-      <MessageBlock
-        authorName={post.author_name}
-        authorPicture={post.author_picture}
-        text={post.text}
-        createdAt={post.created_at}
-        editable={post.author_id === user.id}
-        onEdit={onEditPost}
-        onDelete={onDeletePost}
-      />
+      <CardBlock>
+        <MessageBlock
+          authorName={post.author_name}
+          authorPicture={post.author_picture}
+          text={post.text}
+          createdAt={post.created_at}
+          editable={post.author_id === user.id}
+          onEdit={onEditPost}
+          onDelete={onDeletePost}
+        />
+      </CardBlock>
       <CardBlock>
         <Flex justify="space-evenly">
           <Space key="like">
