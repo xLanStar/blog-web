@@ -77,6 +77,20 @@ const Home: React.FunctionComponent = () => {
     [message, posts]
   );
 
+  const editComment = useCallback(
+    (commentId: number, text: string) => {
+      APIHelper.patch(`${API_COMMENT_URL}/${commentId}`, { text })
+        .then(() => {
+          message.success("編輯成功");
+          fetchPosts();
+        })
+        .catch(() => {
+          message.error("操作失敗");
+        });
+    },
+    [message]
+  );
+
   const fetchPosts = () => {
     APIHelper.get<IPost[]>(API_POST_URL).then((data) => {
       setPosts(data.data);
@@ -109,6 +123,7 @@ const Home: React.FunctionComponent = () => {
           onSendComment={(comment) => {
             createComment(post.id, comment);
           }}
+          onEditComment={editComment}
         />
       ))}
       <NewPostModal

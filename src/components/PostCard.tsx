@@ -2,69 +2,71 @@ import {
   CheckOutlined,
   CloseOutlined,
   CommentOutlined,
-  EditFilled,
+  EditOutlined,
   HeartFilled,
   SendOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Flex, Image, Input, Space, Tooltip } from "antd";
 import Meta from "antd/es/card/Meta";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAppSelector } from "../hooks";
 import { formatDateTime, formatPassedTime } from "../utils/date.utils";
 import Card, { CardBlock } from "./Card";
-import TextAreaWithFloatButton from "./TextAreaWithFloatButton";
 
 const { PreviewGroup } = Image;
 
 export const COLOR_POST_CARD_LIKE = "#eb2f96";
 
-type PostContentBlockProps = {
-  post: IPost;
+type MessageBlockProps = {
+  authorPicture?: string;
+  authorName?: string;
+  text?: string;
+  createdAt?: string;
   editable?: boolean;
-  onEditPost?: (text: string) => void;
+  onEdit?: (text: string) => void;
 };
 
-const PostContentBlock: React.FunctionComponent<PostContentBlockProps> = ({
-  post,
+const MessageBlock: React.FunctionComponent<MessageBlockProps> = ({
+  authorPicture,
+  authorName,
+  text,
+  createdAt,
   editable,
-  onEditPost,
+  onEdit,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [text, setText] = useState(post.text);
+  const [editingText, setEditingText] = useState(text ?? "");
 
-  const canSave = !!text && text !== post.text;
-
-  useEffect(() => {
-    if (!isEditing) return;
-    setText(post.text);
-  }, [isEditing]); // eslint-disable-line react-hooks/exhaustive-deps
+  const canSave = !!editingText && editingText !== text;
 
   return (
-    <CardBlock className="post-content-block">
+    <CardBlock style={{ position: "relative" }}>
       <Flex vertical gap={8}>
         <Meta
-          avatar={<Avatar src={post.author_picture} />}
-          title={post.author_name}
+          avatar={<Avatar src={authorPicture} />}
+          title={authorName}
           description={
-            <Tooltip title={formatDateTime(post.created_at)}>
-              {formatPassedTime(post.created_at)}
-            </Tooltip>
+            createdAt && (
+              <Tooltip title={formatDateTime(createdAt)}>
+                {formatPassedTime(createdAt)}
+              </Tooltip>
+            )
           }
           style={{ whiteSpace: "pre-line" }}
         />
         {isEditing ? (
           <Input.TextArea
-            value={text}
+            value={editingText}
             placeholder="分享你的心情"
             autoSize={{ minRows: 2, maxRows: 6 }}
             style={{ resize: "none" }}
-            onChange={(e) => setText(e.target.value)}
+            onChange={(e) => setEditingText(e.target.value)}
           />
         ) : (
-          post.text
+          text
         )}
       </Flex>
-      <Space className="post-content-control">
+      <Space style={{ position: "absolute", top: 4, right: 4 }}>
         {isEditing ? (
           <>
             <Button
@@ -75,7 +77,7 @@ const PostContentBlock: React.FunctionComponent<PostContentBlockProps> = ({
               disabled={!canSave}
               onClick={() => {
                 setIsEditing(false);
-                onEditPost?.(text);
+                onEdit?.(editingText);
               }}
             />
             <Button
@@ -94,9 +96,10 @@ const PostContentBlock: React.FunctionComponent<PostContentBlockProps> = ({
               key="edit"
               type="text"
               shape="circle"
-              icon={<EditFilled />}
+              icon={<EditOutlined />}
               onClick={() => {
                 setIsEditing(true);
+                setEditingText(text ?? "");
               }}
             />
           )
@@ -117,13 +120,26 @@ const CommentTextArea: React.FunctionComponent<CommentTextAreaProps> = ({
   const [comment, setComment] = useState("");
 
   return (
-    <TextAreaWithFloatButton
-      buttonProps={{
-        icon: <SendOutlined />,
-        type: "text",
-        shape: "circle",
-        disabled: !comment,
-        onClick: () => {
+    <div style={{ position: "relative" }}>
+      <Input.TextArea
+        value={comment}
+        placeholder="發佈你的回覆"
+        autoSize={{ minRows: 2, maxRows: 6 }}
+        style={{ resize: "none" }}
+        onChange={(e) => setComment(e.target.value)}
+        {...props}
+      />
+      <Button
+        icon={<SendOutlined />}
+        type={"text"}
+        shape={"circle"}
+        disabled={!comment}
+        style={{
+          position: "absolute",
+          right: 4,
+          bottom: 4,
+        }}
+        onClick={() => {
           console.log("onClick", onSendComment);
           if (!onSendComment) return;
           try {
@@ -133,15 +149,9 @@ const CommentTextArea: React.FunctionComponent<CommentTextAreaProps> = ({
           } catch (e) {
             console.error(e);
           }
-        },
-      }}
-      value={comment}
-      placeholder="發佈你的回覆"
-      autoSize={{ minRows: 2, maxRows: 6 }}
-      style={{ resize: "none" }}
-      onChange={(e) => setComment(e.target.value)}
-      {...props}
-    />
+        }}
+      />
+    </div>
   );
 };
 
@@ -155,6 +165,7 @@ export interface IPost {
   likes_count: number;
   liked: boolean;
   comments: {
+    id: number;
     author_id: number;
     author_name: string;
     author_picture: string;
@@ -168,6 +179,7 @@ export type PostCardProps = {
   post: IPost;
   onEditPost?: (text: string) => void;
   onClickLike?: () => void;
+  onEditComment?: (commentId: number, comment: string) => void;
   onSendComment?: (comment: string) => void;
 };
 
@@ -178,6 +190,7 @@ const PostCard: React.FunctionComponent<PostCardProps> = ({
   post,
   onEditPost,
   onClickLike,
+  onEditComment,
   onSendComment,
 }) => {
   const user = useAppSelector((state) => state.user);
@@ -196,10 +209,13 @@ const PostCard: React.FunctionComponent<PostCardProps> = ({
         minWidth: 300,
       }}
     >
-      <PostContentBlock
-        post={post}
+      <MessageBlock
+        authorName={post.author_name}
+        authorPicture={post.author_picture}
+        text={post.text}
+        createdAt={post.created_at}
         editable={post.author_id === user.id}
-        onEditPost={onEditPost}
+        onEdit={onEditPost}
       />
       <CardBlock>
         <Flex justify="space-evenly">
@@ -233,20 +249,18 @@ const PostCard: React.FunctionComponent<PostCardProps> = ({
       {showComments && (
         <CardBlock>
           <Flex vertical gap={24}>
-            {post.comments.map((comment, idx) => (
-              <Space key={idx} direction="vertical" size="small">
-                <Meta
-                  avatar={<Avatar src={comment.author_picture} />}
-                  title={comment.author_name}
-                  description={
-                    <Tooltip title={formatDateTime(comment.created_at)}>
-                      {formatPassedTime(comment.created_at)}
-                    </Tooltip>
-                  }
-                  style={{ whiteSpace: "pre-line" }}
-                />
-                {comment.text}
-              </Space>
+            {post.comments.map((comment) => (
+              <MessageBlock
+                key={comment.id}
+                authorName={comment.author_name}
+                authorPicture={comment.author_picture}
+                text={comment.text}
+                createdAt={comment.created_at}
+                editable={comment.author_id === user.id}
+                onEdit={(text) => {
+                  onEditComment?.(comment.id, text);
+                }}
+              />
             ))}
             <Meta
               avatar={<Avatar src={user.picture} />}
