@@ -21,6 +21,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             token: {
               colorPrimary: COLOR_PRIMARY,
             },
+            components: {
+              Typography: {
+                titleMarginBottom: 0,
+              },
+            },
           }}
         >
           <AntdApp>
