@@ -4,6 +4,7 @@ import {
   CommentOutlined,
   EditOutlined,
   HeartFilled,
+  HeartOutlined,
   SendOutlined,
 } from "@ant-design/icons";
 import { Avatar, Button, Flex, Image, Input, Space, Tooltip } from "antd";
@@ -222,7 +223,7 @@ const PostCard: React.FunctionComponent<PostCardProps> = ({
           <Space key="like">
             <Tooltip title="喜歡">
               <Button
-                icon={<HeartFilled />}
+                icon={post.liked ? <HeartFilled /> : <HeartOutlined />}
                 style={{
                   color: post.liked ? COLOR_POST_CARD_LIKE : "",
                 }}
