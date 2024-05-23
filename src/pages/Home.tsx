@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import NewPostModal from "../components/NewPostModal";
 import PostCard, { IPost } from "../components/PostCard";
 import {
+  API_COMMENT_URL,
   API_POST_DISLIKE_URL,
   API_POST_LIKE_URL,
   API_POST_URL,
@@ -17,31 +18,64 @@ const Home: React.FunctionComponent = () => {
   const [posts, setPosts] = useState<IPost[]>([]);
   const [isNewPostModalOpen, setIsNewPostModalOpen] = useState(false);
 
-  const onClickLikeBlog = useCallback((id: number) => {
-    const post = posts.find((blog) => blog.id === id);
-    if (!post) return;
-    APIHelper.post(
-      `${post.liked ? API_POST_DISLIKE_URL : API_POST_LIKE_URL}/${id}`
-    )
-      .then(() => {
-        setPosts((prev) => {
-          const idx = prev.findIndex((blog) => blog.id === id);
-          if (idx == -1) return prev;
-          const newBlogs = [...prev];
-          if (newBlogs[idx].liked) {
-            newBlogs[idx].likes_count--;
-            newBlogs[idx].liked = false;
-          } else {
-            newBlogs[idx].likes_count++;
-            newBlogs[idx].liked = true;
-          }
-          return newBlogs;
+  const editPost = useCallback(
+    (id: number, text: string) => {
+      APIHelper.patch(`${API_POST_URL}/${id}`, { text })
+        .then(() => {
+          message.success("編輯成功");
+          fetchPosts();
+        })
+        .catch(() => {
+          message.error("操作失敗");
         });
-      })
-      .catch(() => {
-        message.error("操作失敗");
-      });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    },
+    [message]
+  );
+
+  const likePost = useCallback(
+    (id: number) => {
+      const post = posts.find((blog) => blog.id === id);
+      if (!post) return;
+      APIHelper.post(
+        `${post.liked ? API_POST_DISLIKE_URL : API_POST_LIKE_URL}/${id}`
+      )
+        .then(() => {
+          setPosts((prev) => {
+            const idx = prev.findIndex((blog) => blog.id === id);
+            if (idx == -1) return prev;
+            const newPosts = [...prev];
+            if (newPosts[idx].liked) {
+              newPosts[idx].likes_count--;
+              newPosts[idx].liked = false;
+            } else {
+              newPosts[idx].likes_count++;
+              newPosts[idx].liked = true;
+            }
+            return newPosts;
+          });
+        })
+        .catch(() => {
+          message.error("操作失敗");
+        });
+    },
+    [message, posts]
+  );
+
+  const createComment = useCallback(
+    (postId: number, comment: string) => {
+      const post = posts.find((post) => post.id === postId);
+      if (!post) return;
+      APIHelper.post(API_COMMENT_URL, { post_id: postId, text: comment })
+        .then(() => {
+          message.success("留言成功");
+          fetchPosts();
+        })
+        .catch(() => {
+          message.error("操作失敗");
+        });
+    },
+    [message, posts]
+  );
 
   const fetchPosts = () => {
     APIHelper.get<IPost[]>(API_POST_URL).then((data) => {
@@ -62,11 +96,19 @@ const Home: React.FunctionComponent = () => {
           onClick={() => setIsNewPostModalOpen(true)}
         />
       </Tooltip>
-      {posts.map((blog, idx) => (
+      {posts.map((post, idx) => (
         <PostCard
           key={idx}
-          post={blog}
-          onClickLike={() => onClickLikeBlog(blog.id)}
+          post={post}
+          onEditPost={(text) => {
+            editPost(post.id, text);
+          }}
+          onClickLike={() => {
+            likePost(post.id);
+          }}
+          onSendComment={(comment) => {
+            createComment(post.id, comment);
+          }}
         />
       ))}
       <NewPostModal

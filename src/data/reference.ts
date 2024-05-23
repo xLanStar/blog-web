@@ -7,6 +7,7 @@ const AUTH_URL = `${SERVER_HOST}/auth`;
 export const AUTH_SIGNUP_URL = `${AUTH_URL}/signup`;
 export const AUTH_VERIFY_URL = `${AUTH_URL}/verify`;
 export const AUTH_LOGIN_URL = `${AUTH_URL}/login`;
+export const AUTH_LOGOUT_URL = `${AUTH_URL}/logout`;
 
 // API
 const API_URL = `${SERVER_HOST}/api`;

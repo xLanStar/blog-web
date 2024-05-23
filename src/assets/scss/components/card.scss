@@ -1,0 +1,7 @@
+.card-block {
+  padding: 12px;
+}
+
+.card-block ~ .card-block {
+  border-top: 1px solid #f0f0f0;
+}

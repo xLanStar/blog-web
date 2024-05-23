@@ -9,6 +9,8 @@ import {
   Input,
 } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
+import { AUTH_LOGOUT_URL } from "../data/reference";
+import APIHelper from "../helper/APIHelper";
 import { useAppSelector } from "../hooks";
 
 const { Header, Footer, Content } = AntdLayout;
@@ -28,7 +30,11 @@ const Layout = () => {
       key: "2",
       icon: <LogoutOutlined />,
       label: "登出",
-      onClick: () => navigate("/signin"),
+      onClick: () => {
+        APIHelper.post(AUTH_LOGOUT_URL).then(() => {
+          navigate("/signin");
+        });
+      },
     },
   ];
 

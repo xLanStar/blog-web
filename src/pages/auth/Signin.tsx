@@ -14,12 +14,15 @@ const Signin: React.FunctionComponent = () => {
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => {
-      APIHelper.post(AUTH_LOGIN_URL, {
-        code: codeResponse.code,
-      }).then(({ data }) => {
-        dispatch(setUser(data as IUserState));
-        navigate("/", { replace: true });
-      });
+      setTimeout(() => {
+        // avoid 「Token used too early」
+        APIHelper.post(AUTH_LOGIN_URL, {
+          code: codeResponse.code,
+        }).then(({ data }) => {
+          dispatch(setUser(data as IUserState));
+          navigate("/", { replace: true });
+        });
+      }, 100);
     },
     flow: "auth-code",
   });
