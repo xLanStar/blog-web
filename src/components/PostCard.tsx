@@ -59,7 +59,11 @@ const MessageBlock: React.FunctionComponent<MessageBlockProps> = ({
     <Flex vertical gap={8}>
       <Flex justify="space-between" align="start">
         <Flex gap={8}>
-          <Avatar src={authorPicture} />
+          <Avatar
+            src={authorPicture}
+            size="large"
+            style={{ alignSelf: "center" }}
+          />
           <Flex vertical>
             <Typography.Title level={5}>{authorName}</Typography.Title>
             <Typography.Text type="secondary">
