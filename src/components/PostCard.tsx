@@ -40,48 +40,11 @@ const PostContentBlock: React.FunctionComponent<PostContentBlockProps> = ({
   }, [isEditing]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <CardBlock>
+    <CardBlock className="post-content-block">
       <Flex vertical gap={8}>
         <Meta
           avatar={<Avatar src={post.author_picture} />}
-          title={
-            <Flex justify="space-between" style={{ width: "100%" }}>
-              {post.author_name}
-              {isEditing ? (
-                <Space>
-                  <Button
-                    type="text"
-                    shape="circle"
-                    icon={<CheckOutlined />}
-                    disabled={!canSave}
-                    onClick={() => {
-                      setIsEditing(false);
-                      onEditPost?.(text);
-                    }}
-                  />
-                  <Button
-                    type="text"
-                    shape="circle"
-                    icon={<CloseOutlined />}
-                    onClick={() => {
-                      setIsEditing(false);
-                    }}
-                  />
-                </Space>
-              ) : (
-                editable && (
-                  <Button
-                    type="text"
-                    shape="circle"
-                    icon={<EditFilled />}
-                    onClick={() => {
-                      setIsEditing(true);
-                    }}
-                  />
-                )
-              )}
-            </Flex>
-          }
+          title={post.author_name}
           description={
             <Tooltip title={formatDateTime(post.created_at)}>
               {formatPassedTime(post.created_at)}
@@ -101,6 +64,44 @@ const PostContentBlock: React.FunctionComponent<PostContentBlockProps> = ({
           post.text
         )}
       </Flex>
+      <Space className="post-content-control">
+        {isEditing ? (
+          <>
+            <Button
+              key="save"
+              type="text"
+              shape="circle"
+              icon={<CheckOutlined />}
+              disabled={!canSave}
+              onClick={() => {
+                setIsEditing(false);
+                onEditPost?.(text);
+              }}
+            />
+            <Button
+              key="cancel"
+              type="text"
+              shape="circle"
+              icon={<CloseOutlined />}
+              onClick={() => {
+                setIsEditing(false);
+              }}
+            />
+          </>
+        ) : (
+          editable && (
+            <Button
+              key="edit"
+              type="text"
+              shape="circle"
+              icon={<EditFilled />}
+              onClick={() => {
+                setIsEditing(true);
+              }}
+            />
+          )
+        )}
+      </Space>
     </CardBlock>
   );
 };

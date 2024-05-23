@@ -10,7 +10,10 @@ export const CardBlock: React.FunctionComponent<BlockProps> = ({
   ...props
 }) => {
   return (
-    <div className={className + "card-block"} {...props}>
+    <div
+      className={className ? className + " card-block" : "card-block"}
+      {...props}
+    >
       {children}
     </div>
   );
