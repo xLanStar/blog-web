@@ -72,7 +72,7 @@ const MessageBlock: React.FunctionComponent<MessageBlockProps> = ({
           text
         )}
       </Flex>
-      <Space style={{ position: "absolute", top: 4, right: 4 }}>
+      <Space style={{ position: "absolute", top: 0, right: 0 }}>
         {isEditing ? (
           <>
             <Button
@@ -157,8 +157,8 @@ const CommentTextArea: React.FunctionComponent<CommentTextAreaProps> = ({
         disabled={!comment}
         style={{
           position: "absolute",
-          right: 4,
-          bottom: 4,
+          right: 0,
+          bottom: 0,
         }}
         onClick={() => {
           console.log("onClick", onSendComment);
